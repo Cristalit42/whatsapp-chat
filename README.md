@@ -6,9 +6,7 @@
 
 Сделал для WhatsApp, а не для MAX (задание это допускает): MAX рассчитан на российские номера, а я нахожусь в Кыргызстане.
 
-**Демо:** _ссылка_
-
-![screenshot](./docs/screenshot.png)
+**Демо:** https://whatsapp-chat-teal.vercel.app
 
 ## Что умеет
 
