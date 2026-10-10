@@ -1,75 +1,53 @@
-# React + TypeScript + Vite
+# WhatsApp Chat (GREEN-API)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Тестовое задание на позицию «Фронтенд разработчик React» в GREEN-API.
 
-Currently, two official plugins are available:
+Чат для отправки и получения текстовых сообщений WhatsApp через [GREEN-API](https://green-api.com), внешний вид по мотивам web.whatsapp.com.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Сделал для WhatsApp, а не для MAX (задание это допускает): MAX рассчитан на российские номера, а я нахожусь в Кыргызстане.
 
-## React Compiler
+**Демо:** _ссылка_
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+![screenshot](./docs/screenshot.png)
 
-## Expanding the ESLint configuration
+## Что умеет
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- вход по `idInstance` / `apiTokenInstance` с проверкой статуса инстанса
+- новый чат по номеру телефона
+- отправка — [SendMessage](https://green-api.com/docs/api/sending/SendMessage/)
+- получение — [HTTP API](https://green-api.com/docs/api/receiving/technology-http-api/): `ReceiveNotification` + `DeleteNotification` в цикле
+- статусы доставки (✓, ✓✓, прочитано), повторная отправка при ошибке
+- сообщение с нового номера создаёт чат, счётчик непрочитанных
+- переписка сохраняется в localStorage
+- адаптив под мобильные
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Стек
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+React 19, TypeScript, Vite, Tailwind CSS 4. Без доп. библиотек — `fetch` и хуки.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Запуск
 
+```bash
+git clone https://github.com/Cristalit42/whatsapp-chat.git
+cd whatsapp-chat
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Открыть http://localhost:5173 и ввести `apiUrl`, `idInstance`, `apiTokenInstance` из [личного кабинета](https://console.green-api.com).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+В настройках инстанса поле webhookUrl должно быть пустым — уведомления читаются через HTTP API.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Структура
 
 ```
+src/
+  api/greenApi.ts        запросы к API
+  lib/notifications.ts   разбор уведомлений
+  hooks/useIncoming.ts   цикл получения сообщений
+  hooks/useChats.ts      чаты и сообщения
+  components/            UI
+  App.tsx
+```
+
+Ключи доступа в коде не хранятся — только в localStorage браузера, кнопка «Выйти» их удаляет.
